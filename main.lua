@@ -24,9 +24,11 @@ local randomNumber2
 local userAnswer
 local correctAnswer
 local operator
-local counter = 0
-local counterText
 local gameOverScreen
+local score = 0
+local scoreText
+local winGameScreen
+
 
 -- variables for the timer
 local totalSeconds = 10
@@ -49,11 +51,102 @@ local heart3
 local gameOver = audio.loadSound("Sounds/Game Over Sound.mp3")
 local correctSound = audio.loadSound("Sounds/Correct Sound.mp3")
 local wrongBuzz = audio.loadSound("Sounds/Wrong Buzz.mp3")
+local winGame = audio.loadSound("Sounds/You Win Sound.mp3")
 
 
 -------------------------------------------------------------------------------------
 -- LOCAL FUNCTIONS
 -------------------------------------------------------------------------------------
+
+local function AskQuestion()
+
+	operator = math.random(1, 6)
+
+		if (operator == 1) then
+
+		-- generate 2 random numbers between a max. and a min. number
+		randomNumber1 = math.random(1, 10)
+		randomNumber2 = math.random(1, 10)
+		-- set the answer of the question
+		correctAnswer = randomNumber1 + randomNumber2
+	
+		-- create question in text object
+		questionObject.text = randomNumber1 .. " + " .. randomNumber2 .. " = "
+	
+
+	elseif (operator == 2) then
+		-- generate 2 random numbers between a max. and a min. number
+		randomNumber1 = math.random(10, 20)
+		randomNumber2 = math.random(10, 20)
+		-- set the answer of the question
+		if (randomNumber2 > randomNumber1) then
+			correctAnswer = randomNumber2 - randomNumber1
+			-- create question in text object
+			questionObject.text = randomNumber2 .. " - " .. randomNumber1 .. " = "
+		else
+			correctAnswer = randomNumber1 - randomNumber2
+			-- create question in text object
+			questionObject.text = randomNumber1 .. " - " .. randomNumber2 .. " = "
+		end
+
+	elseif (operator == 3) then
+		-- generate 2 random numbers between a max. and a min. number
+		randomNumber1 = math.random(1, 10)
+		randomNumber2 = math.random(1, 10)
+		-- set the answer of the question
+		correctAnswer = randomNumber1 * randomNumber2
+	
+		-- create question in text object
+		questionObject.text = randomNumber1 .. " * " .. randomNumber2 .. " = "
+
+	elseif (operator == 4) then
+		-- generate 2 random numbers between a max. and a min. number
+		randomNumber1 = math.random(1, 10)
+		randomNumber2 = math.random(1, 10)
+		-- set the answer of the question
+		correctAnswer = randomNumber1 * randomNumber2
+	
+		-- create question in text object
+		questionObject.text = correctAnswer .. " / " .. randomNumber2 .. " = "
+		correctAnswer = randomNumber1
+
+	elseif (operator == 5) then
+
+		-- generate 2 random numbers between a max. and a min. number
+		randomNumber1 = math.random(1, 10)
+		randomNumber2 = math.random(1, 3)
+		-- set the answer of the question
+		correctAnswer = randomNumber1 ^ randomNumber2
+	
+		-- create question in text object
+		questionObject.text = randomNumber1 .. " ^ " .. randomNumber2 .. " = "
+
+	elseif (operator == 6) then
+
+		-- generate 2 random numbers between a max. and a min. number
+		randomNumber1 = math.random(1, 10)
+		correctAnswer = randomNumber1 * randomNumber1
+
+	-- create question in text object
+		questionObject.text = " √ "..correctAnswer .. " = "
+
+		--set the the answer of the random question
+		correctAnswer = math.sqrt(correctAnswer)
+	end
+end
+
+local function WinGame()
+	-- when score equals 5 the user wins the game 
+	if (score == 5) then
+		winGameScreen.isVisible = true
+		numericField.isVisible = false
+		clockText.isVisible = false
+		questionObject.isVisible = false
+		scoreText.isVisible = false
+		audio.play(winGame)
+	end
+end
+
 
 local function GameOver()
 	-- when lives equal zero display game over screen
@@ -62,6 +155,7 @@ local function GameOver()
 		numericField.isVisible = false
 		clockText.isVisible = false
 		questionObject.isVisible = false
+		scoreText.isVisible = false
 		audio.play(gameOver)
 	end
 end
@@ -100,6 +194,7 @@ local function UpdateTime()
 		secondsLeft = totalSeconds
 		lives = lives -1
 		UpdateHeart()
+		AskQuestion()
 	end
 end
 
@@ -112,67 +207,25 @@ local function StartTimer()
 	countDownTimer = timer.performWithDelay(1000, UpdateTime, 0)
 end
 
-local function AskQuestion()
-
-	operator = math.random(1,4)
-
-		if (operator == 1) then
-
-		-- generate 2 random numbers between a max. and a min. number
-		randomNumber1 = math.random(10, 20)
-		randomNumber2 = math.random(10, 20)
-	
-		correctAnswer = randomNumber1 + randomNumber2
-	
-		-- create question in text object
-		questionObject.text = randomNumber1 .. " + " .. randomNumber2 .. " = "
-	
-
-	elseif (operator == 2) then
-		-- generate 2 random numbers between a max. and a min. number
-		randomNumber1 = math.random(10, 20)
-		randomNumber2 = math.random(10, 20)
-		if (randomNumber2 > randomNumber1) then
-			correctAnswer = randomNumber2 - randomNumber1
-			-- create question in text object
-			questionObject.text = randomNumber2 .. " - " .. randomNumber1 .. " = "
-		else
-			correctAnswer = randomNumber1 - randomNumber2
-			-- create question in text object
-			questionObject.text = randomNumber1 .. " - " .. randomNumber2 .. " = "
-		end
-
-	elseif (operator == 3) then
-		-- generate 2 random numbers between a max. and a min. number
-		randomNumber1 = math.random(1, 10)
-		randomNumber2 = math.random(1, 10)
-	
-		correctAnswer = randomNumber1 * randomNumber2
-	
-		-- create question in text object
-		questionObject.text = randomNumber1 .. " * " .. randomNumber2 .. " = "
-
-	elseif (operator == 4) then
-		-- generate 2 random numbers between a max. and a min. number
-		randomNumber1 = math.random(1, 10)
-		randomNumber2 = math.random(1, 10)
-	
-		correctAnswer = randomNumber1 * randomNumber2
-	
-		-- create question in text object
-		questionObject.text = correctAnswer .. " / " .. randomNumber2 .. " = "
-		correctAnswer = randomNumber1
-	end
-end
 
 local function  HideCorrect()
+	--hide the correct object
 	correctObject.isVisible = false
 	AskQuestion()
 end
 
 local function HideIncorrect()
+	-- hide the incorrect object
 	incorrectObject.isVisible = false
 	AskQuestion()
+end
+
+local function UpdateScore()
+
+	-- update score
+	score = score + 1
+	scoreText.text = string.format("Score: %d", score)
+	WinGame()
 end
 
 local function NumericFeildListener( event )
@@ -194,8 +247,10 @@ local function NumericFeildListener( event )
 			event.target.text = ""
 			audio.play(correctSound)
 			secondsLeft = totalSeconds
+			UpdateScore()
 			
 		else
+			-- if the answers are not the same
 			incorrectObject.isVisible = true
 			timer.performWithDelay(3000, HideIncorrect) 
 			event.target.text = ""
@@ -258,6 +313,18 @@ gameOverScreen.x = display.contentWidth/2
 gameOverScreen.y = display.contentHeight/2
 gameOverScreen.isVisible = false
 
+-- create the Win game image
+winGameScreen = display.newImageRect("Images/Win Screen.png", 1000, 1000)
+winGameScreen.x = display.contentWidth/2
+winGameScreen.y = display.contentHeight/2
+winGameScreen.isVisible = false
+
+-- create the score text
+scoreText = display.newText( "Score: 0", display.contentHeight * 2 / 8,
+ display.contentWidth * 1 / 8, "Helvetica", 50 )
+scoreText:setTextColor(190/255, 100/255, 30/255)
+scoreText.isVisible = true
+
 
 ---------------------------------------------------------------------------------------
 -- FUNCTION CALLS
@@ -269,3 +336,4 @@ GameOver()
 StartTimer()
 AskQuestion()
 UpdateTime()
+WinGame()
