@@ -28,6 +28,7 @@ local gameOverScreen
 local score = 0
 local scoreText
 local winGameScreen
+local product = 1
 
 
 -- variables for the timer
@@ -60,7 +61,7 @@ local winGame = audio.loadSound("Sounds/You Win Sound.mp3")
 
 local function AskQuestion()
 
-	operator = math.random(1, 6)
+	operator = math.random(1, 7)
 
 		if (operator == 1) then
 
@@ -132,6 +133,19 @@ local function AskQuestion()
 
 		--set the the answer of the random question
 		correctAnswer = math.sqrt(correctAnswer)
+	
+	elseif (operator == 7) then
+
+		-- generate a random number between  a max. and a min. number
+		randomNumber1 = math.random(1, 5)
+		--set the correct answer  for the question
+		for i = 1, randomNumber1 do 
+			product = product * i 
+		end
+		correctAnswer = product
+
+		--create question in text object
+		questionObject.text = randomNumber1.."!".. " ="
 	end
 end
 
@@ -144,6 +158,7 @@ local function WinGame()
 		questionObject.isVisible = false
 		scoreText.isVisible = false
 		audio.play(winGame)
+		audio.dispose(gameOver)
 	end
 end
 
