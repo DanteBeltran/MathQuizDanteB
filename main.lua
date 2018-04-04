@@ -60,7 +60,7 @@ local winGame = audio.loadSound("Sounds/You Win Sound.mp3")
 -------------------------------------------------------------------------------------
 
 local function AskQuestion()
-
+	-- create an operator that picks a random equation  every time
 	operator = math.random(1, 7)
 
 		if (operator == 1) then
