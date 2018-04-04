@@ -23,6 +23,7 @@ local randomNumber1
 local randomNumber2
 local userAnswer
 local correctAnswer
+local correctAnswerText
 local operator
 local gameOverScreen
 local score = 0
@@ -32,8 +33,8 @@ local product = 1
 
 
 -- variables for the timer
-local totalSeconds = 10
-local secondsLeft = 10
+local totalSeconds = 11
+local secondsLeft = 11
 local clockText
 local countDownTimer
 
@@ -60,6 +61,10 @@ local winGame = audio.loadSound("Sounds/You Win Sound.mp3")
 -------------------------------------------------------------------------------------
 
 local function AskQuestion()
+
+	-- make the correct asnwer text invisible
+	correctAnswerText.isVisible = false
+
 	-- create an operator that picks a random equation  every time
 	operator = math.random(1, 7)
 
@@ -157,6 +162,7 @@ local function WinGame()
 		clockText.isVisible = false
 		questionObject.isVisible = false
 		scoreText.isVisible = false
+		correctAnswerText.isVisible = false
 		audio.play(winGame)
 		audio.dispose(gameOver)
 	end
@@ -171,6 +177,7 @@ local function GameOver()
 		clockText.isVisible = false
 		questionObject.isVisible = false
 		scoreText.isVisible = false
+		correctAnswerText.isVisible = false
 		audio.play(gameOver)
 	end
 end
@@ -235,6 +242,12 @@ local function HideIncorrect()
 	AskQuestion()
 end
 
+local function ShowCorrectAnswer()
+	-- display correct answer text
+	correctAnswerText.isVisible = true
+	correctAnswerText.text = string.format("The Correct Answer Is %d", correctAnswer)
+end
+
 local function UpdateScore()
 
 	-- update score
@@ -272,10 +285,13 @@ local function NumericFeildListener( event )
 			secondsLeft = totalSeconds
 			audio.play(wrongBuzz)
 			lives = lives -1
+			ShowCorrectAnswer()
 			UpdateHeart()
 		end
 	end
 end
+
+
 
 --------------------------------------------------------------------------------------
 -- OBJECT CREATION
@@ -294,7 +310,7 @@ correctObject.isVisible = false
 
 -- create the incorrect text object and make it invisible
 incorrectObject = display.newText( "Incorrect!", display.contentWidth/2, 
-	display.contentHeight*2/3, nil, 50 )
+display.contentHeight*2/3, nil, 50 )
 incorrectObject:setTextColor(190/255, 0/255, 0/255)
 incorrectObject.isVisible = false
 
@@ -336,10 +352,15 @@ winGameScreen.isVisible = false
 
 -- create the score text
 scoreText = display.newText( "Score: 0", display.contentHeight * 2 / 8,
- display.contentWidth * 1 / 8, "Helvetica", 50 )
+display.contentWidth * 1 / 8, "Helvetica", 50 )
 scoreText:setTextColor(190/255, 100/255, 30/255)
 scoreText.isVisible = true
 
+-- create a correct answer text
+correctAnswerText = display.newText( "The Correct Answer Is ", display.contentWidth/2, 
+	display.contentHeight/5 * 3, nil, 50)
+correctAnswerText:setTextColor(190/255, 100/255, 30/255)
+correctAnswerText.isVisible = false
 
 ---------------------------------------------------------------------------------------
 -- FUNCTION CALLS
